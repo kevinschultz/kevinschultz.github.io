@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebRTC Screen Sharing</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h1>WebRTC Screen Sharing</h1>
+<p>This page demonstrates how to use WebRTC to share your screen with others.</p>
+<script>
+// Get the WebRTC API
+var webrtc = window.WebRTC;
+
+// Get the user's permission to access their camera and microphone
+var permission = webrtc.getUserMedia({audio: false, video: true});
+
+// If the user grants permission, start the screen sharing
+if (permission) {
+  // Create a new stream
+  var stream = permission.getStream();
+
+  // Start streaming the screen to the remote participants
+  stream.start();
+
+  // Create a new video element
+  var video = document.createElement("video");
+
+  // Set the source of the video element to the stream
+  video.src = stream.getURL();
+
+  // Add the video element to the page
+  document.body.appendChild(video);
+
+  // Create a new peer connection
+  var peerConnection = webrtc.createPeerConnection();
+
+  // Add the video element to the peer connection
+  peerConnection.addStream(video);
+
+  // Connect to the remote peer
+  peerConnection.connect();
+
+  // Create a new event listener
+  peerConnection.onconnect = function() {
+    // Get the remote peer's video element
+    var remoteVideo = peerConnection.remoteVideo;
+
+    // Show the remote peer's video element
+    document.getElementById("remote-video").appendChild(remoteVideo);
+  };
+}
+</script>
+
+<div id="remote-video"></div>
+</body>
+</html>
