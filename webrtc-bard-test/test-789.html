@@ -33,25 +33,17 @@ if (permission) {
   document.body.appendChild(video);
 
   // Create a new peer connection
-  var peerConnection = webrtc.createPeerConnection();
+  var peerConnection = new webrtc.PeerConnection();
 
-  // Add the video element to the peer connection
-  peerConnection.addStream(video);
+  // Connect the peer connection to the video element
+  peerConnection.connect(video);
 
-  // Connect to the remote peer
-  peerConnection.connect();
+  // Create a new media stream
+  var mediaStream = peerConnection.createOffer();
 
-  // Create a new event listener
-  peerConnection.onconnect = function() {
-    // Get the remote peer's video element
-    var remoteVideo = peerConnection.remoteVideo;
-
-    // Show the remote peer's video element
-    document.getElementById("remote-video").appendChild(remoteVideo);
-  };
+  // Send the media stream to the remote participants
+  peerConnection.send(mediaStream);
 }
 </script>
-
-<div id="remote-video"></div>
 </body>
 </html>
