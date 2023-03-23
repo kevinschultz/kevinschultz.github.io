@@ -1,49 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>WebRTC Screen Sharing</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen Sharing</title>
 </head>
 <body>
-<h1>WebRTC Screen Sharing</h1>
-<p>This page demonstrates how to use WebRTC to share your screen with others.</p>
 <script>
-// Get the WebRTC API
-var webrtc = window.WebRTC;
+  // Get the display media from the user
+  var displayMedia = navigator.getDisplayMedia({type: 'screen'});
 
-// Get the user's permission to access their camera and microphone
-var permission = webrtc.getUserMedia({audio: false, video: true});
+  // Send the display media to the other user
+  var sender = new WebRTCPeerConnection();
+  sender.connect(displayMedia);
+  sender.sendStream(displayMedia.stream);
 
-// If the user grants permission, start the screen sharing
-if (permission) {
-  // Create a new stream
-  var stream = permission.getStream();
+  // Receive the display media from the other user
+  var receiver = new WebRTCPeerConnection();
+  receiver.connect(displayMedia);
+  receiver.receiveStream(displayMedia.stream);
 
-  // Start streaming the screen to the remote participants
-  stream.start();
+  // Display the received stream on the page
+  var video = document.createElement('video');
+  video.src = receiver.getPeerConnection().getStream();
+  video.play();
 
-  // Create a new video element
-  var video = document.createElement("video");
-
-  // Set the source of the video element to the stream
-  video.src = stream.getURL();
-
-  // Add the video element to the page
+  // Add the code to the HTML file
   document.body.appendChild(video);
-
-  // Create a new peer connection
-  var peerConnection = new webrtc.PeerConnection();
-
-  // Connect the peer connection to the video element
-  peerConnection.connect(video);
-
-  // Create a new media stream
-  var mediaStream = peerConnection.createOffer();
-
-  // Send the media stream to the remote participants
-  peerConnection.send(mediaStream);
-}
 </script>
 </body>
 </html>
