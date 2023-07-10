@@ -3137,6 +3137,12 @@ textarea.form-control-lg {
   color: var(--bs-btn-hover-color);
 }
 
+.btn-xlg, .btn-group-xlg > .btn {
+  --bs-btn-padding-y: 2rem;
+  --bs-btn-padding-x: 4rem;
+  --bs-btn-font-size: 5rem;
+  --bs-btn-border-radius: 2rem;
+}
 .btn-lg, .btn-group-lg > .btn {
   --bs-btn-padding-y: 0.5rem;
   --bs-btn-padding-x: 1rem;
