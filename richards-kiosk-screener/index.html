@@ -18,6 +18,14 @@
     <body>
         <!-- Page Content--><br/><br /><br />
 		<table align="center">
+		<tr>
+			<td>
+				<img src="https://brand.northeastern.edu/wp-content/uploads/2022/06/ac-grid-6-black.svg" height="50%">
+			</td>
+		</tr>
+		</table>
+		<br/><br /><br />
+		<table align="center">
 			<tr>
 		<td><a href="#sfs" class="btn btn-primary btn-xlg" data-bs-toggle="collapse">I'm here for SFS</a></td>
 			</tr>
@@ -110,7 +118,7 @@
         $(document).ready(function() {
             // Hide the buttons after clicking
             $(".btn.btn-primary.btn-xlg").on("click", function() {
-                $(this).hide();
+                $(".btn.btn-primary.btn-xlg").hide();
             });
 
             // Scroll to the desired section after clicking
