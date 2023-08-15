@@ -2,8 +2,8 @@
 <html>
    <body>
       <center>
-         <input type="password" placeholder="passcode" id="tutorial">
-         <button onclick="protectpasscode()">CHECK</button>
+         <input type="password" placeholder="special code" id="tutorial">
+         <button onclick="protectpasscode()">Login</button>
          <script>
             function protectpasscode() {
                const result = document.getElementById("tutorial").value;
@@ -13,7 +13,7 @@
                   alert("Type passcode")
                } else {
                   if (result == passcode) {
-                     document.window.location.href('http://www.google.com');
+                     location.href('http://www.google.com');
                   } else {
                      alert("Incorrect Passcode");
                      location.reload();
