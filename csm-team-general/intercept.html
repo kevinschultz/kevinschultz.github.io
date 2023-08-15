@@ -3,7 +3,7 @@
    <body>
       <center>
          <input type="password" placeholder="special code" id="tutorial">
-         <button onclick="protectpasscode()">Let Me In</button>
+         <button onclick="protectpasscode()">Login</button>
          <script>
             function protectpasscode() {
                const result = document.getElementById("tutorial").value;
@@ -13,7 +13,7 @@
                   alert("Type passcode")
                } else {
                   if (result == passcode) {
-                     location.replace('http://www.google.com');
+                     location.replace('https://kevinschultz.github.io/csm-team-general/special.html');
                   } else {
                      alert("Incorrect Passcode");
                      location.reload();
