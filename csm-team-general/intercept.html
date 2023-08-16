@@ -7,15 +7,15 @@
          <script>
             function protectpasscode() {
                const result = document.getElementById("tutorial").value;
-               let passcode = 12345;
+               let passcode = 'potato';
                let space = '';
                if (result == space) {
-                  alert("Type passcode")
+                  alert("Password please!")
                } else {
                   if (result == passcode) {
                      location.replace('https://kevinschultz.github.io/csm-team-general/special.html');
                   } else {
-                     alert("Incorrect Passcode");
+                     alert("Incorrect Password");
                      location.reload();
                   }
                }
