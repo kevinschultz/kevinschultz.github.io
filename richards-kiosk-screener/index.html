@@ -30,7 +30,7 @@
 		<br /> <br /> <br />
 		<table align="center">
 			<tr>
-		<td><a href="#ogs" class="btn btn-primary btn-xlg" data-bs-toggle="collapse">I'm here for OGS</a></td>
+		<td><a href="#ogs-on" class="btn btn-primary btn-xlg" data-bs-toggle="collapse" onclick="checkAppointmentTime2()">I'm here for OGS</a></td>
 			</tr>
 		</table>
 		<br /> 
@@ -59,7 +59,7 @@
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-cash"></i></div>
                                 <h2 class="fs-4 fw-bold">Making a Payment</h2>
-                                <p class="mb-0">You'll need to leave this location - and head just down the hall to 371 Richards Hall.</p>
+                                <p class="mb-0">You'll need to leave this location - and head just down the hall to 349 Richards Hall.</p>
 
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="ogs" class="col-lg-6 col-xxl-4 mb-5 collapse">
+                    <div id="ogs-on" class="col-lg-6 col-xxl-4 mb-5 collapse">
                         <div class="card bg-light border-0 h-100">
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-gear"></i></div>
@@ -93,6 +93,18 @@
                                 <p class="mb-0">If you have a general question that you need a quick answer for, please join the list below.</p>
 								<br />
 								<p><a class="btn btn-primary btn-lg" href="https://northeastern.service-now.com/hh_kiosk?id=csm_walkup_check_in&location_id=c69ced5bdb4238102d2caa82ca961987">Join the List</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="ogs-off" class="col-lg-6 col-xxl-4 mb-5 collapse">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-gear"></i></div>
+                                <h2 class="fs-4 fw-bold">OGS Process Questions</h2>
+                                <p class="mb-0">OGS is currently unavailable today from 12pm to 2pm.<br /> <br /> Please come back after 2pm. <br /><br /> Thank you!</p>
+                            <!--    <p class="mb-0">If you have a general question that you need a quick answer for, please join the list below.</p>-->
+								<br />
+							<!--	<p><a class="btn btn-primary btn-lg" href="https://northeastern.service-now.com/hh_kiosk?id=csm_walkup_check_in&location_id=c69ced5bdb4238102d2caa82ca961987">Join the List</a></p> -->
                             </div>
                         </div>
                     </div>
@@ -191,6 +203,26 @@
 
       </script>
       
+      <!-- do ogs only at certain times -->
+      <script>
+        function checkAppointmentTime2() {
+          var now = new Date();
+          var dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+          var hour = now.getHours(); // 0 to 23
+        
+          var isVisible = true; // Default to true to show 'ogs-on' most of the time
+        
+          // Adjust visibility for Thursday from 12pm to 2pm
+          if (dayOfWeek === 4 && (hour >= 12 && hour < 14)) {
+            isVisible = false; // Show 'ogs-off' during these hours on Thursday
+          }
+        
+          // Show or hide the elements based on the schedule
+          document.getElementById("ogs-on").style.display = isVisible ? "block" : "none";
+          document.getElementById("ogs-off").style.display = isVisible ? "none" : "block";
+        }
+        </script>
+        
 
     </body>
 </html>
