@@ -121,6 +121,18 @@
                             </div>
                         </div>
                     </div>
+                    <div id="wecare-on-virtual" class="col-lg-6 col-xxl-4 mb-5 collapse">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-gear"></i></div>
+                                <h2 class="fs-4 fw-bold">WeCare Check In</h2>
+ <!--                               <p class="mb-0">WeCare is closed for walk-ins on Friday, February 16th. Please email wecare@norteastern.edu.</p>-->
+                               <p class="mb-0">We Care provides support to any Northeastern student experiencing unexpected challenges in their personal or academic lives. If your concerns are primarily financial, please speak with an SFS counselor first. If you are an international student with a visa question, please check in for OGS.<br /><br />On <strong>Thursdays</strong> (today) if you check in here, you will receive an email or phone outreach from a staff member because <strong>all services are virtual today</strong>.</p>
+								<br />
+								<p><a class="btn btn-primary btn-lg" href="https://northeastern.service-now.com/hh_kiosk?id=csm_walkup_check_in&location_id=ff6e2577dbcccd18ebcdcafc139619b4">Check In</a></p>
+                            </div>
+                        </div>
+                    </div>
                     <div id="wecare-off" class="col-lg-6 col-xxl-4 mb-5 collapse">
                         <div class="card bg-light border-0 h-100">
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
@@ -171,38 +183,46 @@
     <!-- do WeWork checkin only during certain times -->
     <script>
         function checkAppointmentTime() {
-          var now = new Date();
-          var dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
-          var hour = now.getHours(); // 0 to 23
-      
-          var isVisible = false;
-      
-        // Schedule
-        switch (dayOfWeek) {
-            case 1: // Monday
-                isVisible = hour >= 11 && hour < 13;
-                break;
-            case 2: // Tuesday
-                isVisible = hour >= 10 && hour < 12;
-                break;
-            case 3: // Wednesday
-                isVisible = hour >= 10 && hour < 12;
-                break;
-            case 4: // Thursday
-                isVisible = hour >= 12 && hour < 14;
-                break;
-            // No visibility for other days (Sunday, Friday, Saturday)
-            default:
-                isVisible = false;
-                break;
-        }
-      
-          // Show or hide the elements based on the schedule
-          document.getElementById("wecare-on").style.display = isVisible ? "block" : "none";
-          document.getElementById("wecare-off").style.display = isVisible ? "none" : "block";
+            var now = new Date();
+            var dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+            var hour = now.getHours(); // 0 to 23
+    
+            var isVisible = false;
+            var elementToShow = "wecare-on"; // Default element to show
+    
+            // Schedule
+            switch (dayOfWeek) {
+                case 1: // Monday
+                    isVisible = hour >= 11 && hour < 13;
+                    break;
+                case 2: // Tuesday
+                    isVisible = hour >= 10 && hour < 12;
+                    break;
+                case 3: // Wednesday
+                    isVisible = hour >= 10 && hour < 12;
+                    break;
+                case 4: // Thursday
+                    isVisible = hour >= 12 && hour < 14;
+                    elementToShow = "wecare-on-virtual"; // Change element to show on Thursday
+                    break;
+                // No visibility for other days (Sunday, Friday, Saturday)
+                default:
+                    isVisible = false;
+                    break;
+            }
+    
+            // Show or hide the elements based on the schedule
+            if (isVisible) {
+                document.getElementById(elementToShow).style.display = "block";
+                document.getElementById("wecare-off").style.display = "none";
+            } else {
+                document.getElementById("wecare-on").style.display = "none";
+                document.getElementById("wecare-on-virtual").style.display = "none";
+                document.getElementById("wecare-off").style.display = "block";
+            }
         }
 
-      </script>
+    </script>
       
       <!-- do ogs only at certain times 
       <script>
