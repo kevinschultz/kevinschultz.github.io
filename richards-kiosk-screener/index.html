@@ -177,24 +177,25 @@
       
           var isVisible = false;
       
-          // Schedule
-          switch (dayOfWeek) {
+        // Schedule
+        switch (dayOfWeek) {
             case 1: // Monday
-              isVisible = (hour >= 10 && hour < 12) || (hour >= 13 && hour < 17);
-              break;
+                isVisible = hour >= 11 && hour < 13;
+                break;
             case 2: // Tuesday
-              isVisible = hour >= 12 && hour < 14;
-              break;
+                isVisible = hour >= 10 && hour < 12;
+                break;
             case 3: // Wednesday
-              isVisible = (hour >= 10 && hour < 12) || (hour >= 13 && hour < 17);
-              break;
+                isVisible = hour >= 10 && hour < 12;
+                break;
             case 4: // Thursday
-              isVisible = (hour >= 11 && hour < 13) || (hour >= 15 && hour < 17);
-              break;
-            case 5: // Friday
-              isVisible = hour >= 13 && hour < 17;
-              break;
-          }
+                isVisible = hour >= 12 && hour < 14;
+                break;
+            // No visibility for other days (Sunday, Friday, Saturday)
+            default:
+                isVisible = false;
+                break;
+        }
       
           // Show or hide the elements based on the schedule
           document.getElementById("wecare-on").style.display = isVisible ? "block" : "none";
