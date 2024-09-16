@@ -184,24 +184,22 @@
     <script>
         function checkAppointmentTime() {
             var now = new Date();
-            var dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
-            var hour = now.getHours(); // 0 to 23
-            var minutes = now.getMinutes();
+            var dayOfWeek = now.getDay(); 
+            var hour = now.getHours();
+            var minutes = now.getMinutes()
 
             var isVisible = false;
-            var elementToShow = "wecare-on"; // Default element to show
+            var elementToShow = "wecare-on"; 
 
-            // Updated Schedule
             switch (dayOfWeek) {
                 case 1: // Monday
                     if (hour >= 10 && hour < 12) {
                         isVisible = true;
-                    } else if (hour === 13 && minutes === 0) { 
+                    } else if (hour >= 13 && hour < 15) {
                         isVisible = true;
                         elementToShow = "wecare-on-virtual"; 
-                    } else if (hour === 14) {
-                        isVisible = true;
-                        elementToShow = "wecare-on-virtual"; 
+                        // Hide the default 'wecare-on' during virtual times
+                        document.getElementById("wecare-on").style.display = "none"; 
                     }
                     break;
                 case 2: // Tuesday
@@ -210,39 +208,33 @@
                 case 3: // Wednesday
                     if (hour >= 10 && hour < 12) {
                         isVisible = true;
-                    } else if (hour === 13 && minutes >= 30) { 
-                        isVisible = true;
-                    } else if (hour === 14) {
+                    } else if (hour === 13 && minutes >= 30 || hour === 14 && minutes < 30) {
                         isVisible = true;
                     }
                     break;
                 case 4: // Thursday
-                    if (hour >= 10 && hour < 11) {
+                    if (hour >= 10 && hour < 11 || hour === 11 && minutes < 30) {
                         isVisible = true;
-                    } else if (hour === 11 && minutes <= 30) { 
-                        isVisible = true;
-                    } else if (hour === 13 && minutes === 0) { 
+                    } else if (hour >= 13 && hour < 15) {
                         isVisible = true;
                         elementToShow = "wecare-on-virtual"; 
-                    } else if (hour === 14) {
-                        isVisible = true;
-                        elementToShow = "wecare-on-virtual"; 
+                        // Hide the default 'wecare-on' during virtual times
+                        document.getElementById("wecare-on").style.display = "none"; 
                     }
                     break;
                 case 5: // Friday
-                    isVisible = hour >= 11 && hour < 13;
+                    isVisible = hour >= 11 && hour < 13
                     break;
-                // No visibility for other days (Sunday, Saturday)
                 default:
                     isVisible = false;
                     break;
             }
 
-            // Show or hide the elements based on the schedule
             if (isVisible) {
                 document.getElementById(elementToShow).style.display = "block";
                 document.getElementById("wecare-off").style.display = "none";
             } else {
+                // Ensure both 'wecare-on' and 'wecare-on-virtual' are hidden when not visible
                 document.getElementById("wecare-on").style.display = "none";
                 document.getElementById("wecare-on-virtual").style.display = "none";
                 document.getElementById("wecare-off").style.display = "block";
