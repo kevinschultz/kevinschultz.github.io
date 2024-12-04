@@ -3144,10 +3144,10 @@ textarea.form-control-lg {
   --bs-btn-border-radius: 1.5rem;
 }
 .btn-lg, .btn-group-lg > .btn {
-  --bs-btn-padding-y: 0.5rem;
-  --bs-btn-padding-x: 1rem;
-  --bs-btn-font-size: 1.25rem;
-  --bs-btn-border-radius: 0.5rem;
+  --bs-btn-padding-y: 1.25rem;
+  --bs-btn-padding-x: 3rem;
+  --bs-btn-font-size: 3rem;
+  --bs-btn-border-radius: 1rem;
 }
 
 .btn-sm, .btn-group-sm > .btn {
