@@ -129,7 +129,7 @@
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-gear"></i></div>
                                 <h2 class="fs-4 fw-bold">WeCare Check In</h2>
  <!--                               <p class="mb-0">WeCare is closed for walk-ins on Friday, February 16th. Please email wecare@norteastern.edu.</p>-->
-                               <p class="mb-0">We Care provides support to any Northeastern student experiencing unexpected challenges in their personal or academic lives. If your concerns are primarily financial, please speak with an SFS counselor first. If you are an international student with a visa question, please check in for OGS.<br /><br /><strong>Between 1-3pm on Mondays and Thursdays</strong> (today) if you check in here, you will receive an email or phone outreach from a staff member because <strong>all services are virtual today</strong>.</p>
+                               <p class="mb-0">We Care provides support to any Northeastern student experiencing unexpected challenges in their personal or academic lives. If your concerns are primarily financial, please speak with an SFS counselor first. If you are an international student with a visa question, please check in for OGS.<br /><br /><strong>Today, all We Care services are virtual.</strong>To speak with a We Care representaitve, please visit the Contact page of the We Care website for the current Zoom Room link.<br /><br />The We Care is located at: https://we-care.studentlife.northeastern.edu/contact/</strong>.</p>
 								<br />
 								<p><a class="btn btn-primary btn-lg" href="https://northeastern.service-now.com/hh_kiosk?id=csm_walkup_check_in&location_id=ff6e2577dbcccd18ebcdcafc139619b4">Check In</a></p>
                             </div>
@@ -140,9 +140,9 @@
                             <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-gear"></i></div>
                                 <h2 class="fs-4 fw-bold">WeCare Check In</h2>
-                               <p class="mb-0">We Care is currently unavailable for drop-ins because a schedule has not been set for this term. <br /> <br /> Please email us at wecare@northeastern.edu with a short description of your concern and any action you've already taken. <br /><br /> We will respond within 1-2 business days to set up a meeting, if appropriate.<br /><br /> Thank you!</p>
-<!--                               <p class="mb-0">We Care provides support to any Northeastern student experiencing unexpected challenges in their personal or academic lives. If your concerns are primarily financial, please speak with an SFS counselor first. If you are an international student with a visa question, please check in for OGS.<br /><br />
-                                If you are here to visit WeCare for either a scheduled or unscheduled appointment, please check in.</p>-->
+<!--                               <p class="mb-0">We Care is currently unavailable for drop-ins because a schedule has not been set for this term. <br /> <br /> Please email us at wecare@northeastern.edu with a short description of your concern and any action you've already taken. <br /><br /> We will respond within 1-2 business days to set up a meeting, if appropriate.<br /><br /> Thank you!</p>-->
+                               <p class="mb-0">We Care provides support to any Northeastern student experiencing unexpected challenges in their personal or academic lives. If your concerns are primarily financial, please speak with an SFS counselor first. If you are an international student with a visa question, please check in for OGS.<br /><br />
+                                We Care is not open or available today.</p>
 								<br />
 <!--								<p><a class="btn btn-primary btn-lg" href="https://northeastern.service-now.com/hh_kiosk?id=csm_walkup_check_in&location_id=ff6e2577dbcccd18ebcdcafc139619b4">Check In</a></p>-->
                             </div>
@@ -182,68 +182,72 @@
             });
         });
     </script>
-    <!-- do WeWork checkin only during certain times
+    <!-- do WeWork checkin only during certain times -->
     <script>
         function checkAppointmentTime() {
             var now = new Date();
-            var dayOfWeek = now.getDay(); 
+            var dayOfWeek = now.getDay();
             var hour = now.getHours();
-            var minutes = now.getMinutes()
-
+            var minutes = now.getMinutes();
+    
             var isVisible = false;
-            var elementToShow = "wecare-on"; 
-
+            var elementToShow = "wecare-on";
+    
             switch (dayOfWeek) {
                 case 1: // Monday
-                    if (hour >= 10 && hour < 12) {
+                    if (hour === 9 && minutes >= 30 || hour === 10 || hour === 11 && minutes < 30) {
                         isVisible = true;
-                    } else if (hour >= 13 && hour < 15) {
-                        isVisible = true;
-                        elementToShow = "wecare-on-virtual"; 
-                        // Hide the default 'wecare-on' during virtual times
-                        document.getElementById("wecare-on").style.display = "none"; 
                     }
                     break;
                 case 2: // Tuesday
-                    isVisible = hour >= 10 && hour < 12;
+                    if (hour === 12 || hour === 13) {
+                        isVisible = true;
+                    } else if (hour === 14 && minutes < 2){
+                        isVisible = true;
+                    }
                     break;
                 case 3: // Wednesday
-                    if (hour >= 10 && hour < 12) {
+                    if (hour === 10 || hour === 11) {
                         isVisible = true;
-                    } else if (hour === 13 && minutes >= 30 || hour === 14 && minutes < 30) {
+                        elementToShow = "wecare-on-virtual";
+                        document.getElementById("wecare-on").style.display = "none";
+                    } else if (hour === 13 || hour === 14 && minutes <= 30) {
                         isVisible = true;
                     }
                     break;
                 case 4: // Thursday
-                    if (hour >= 10 && hour < 11 || hour === 11 && minutes < 30) {
+                    if (hour === 13 || hour === 14) {
                         isVisible = true;
-                    } else if (hour >= 13 && hour < 15) {
+                        elementToShow = "wecare-on-virtual";
+                        document.getElementById("wecare-on").style.display = "none";
+                    } else if (hour === 15 || hour === 16 && minutes <= 30) {
                         isVisible = true;
-                        elementToShow = "wecare-on-virtual"; 
-                        // Hide the default 'wecare-on' during virtual times
-                        document.getElementById("wecare-on").style.display = "none"; 
                     }
                     break;
                 case 5: // Friday
-                    isVisible = hour >= 11 && hour < 13
+                    if (hour === 11 || hour === 12 && minutes <= 30) {
+                        isVisible = true;
+                    } else if (hour === 13 || hour === 14) {
+                        isVisible = true;
+                        elementToShow = "wecare-on-virtual";
+                        document.getElementById("wecare-on").style.display = "none";
+                    }
                     break;
                 default:
                     isVisible = false;
                     break;
             }
-
+    
             if (isVisible) {
                 document.getElementById(elementToShow).style.display = "block";
                 document.getElementById("wecare-off").style.display = "none";
             } else {
-                // Ensure both 'wecare-on' and 'wecare-on-virtual' are hidden when not visible
                 document.getElementById("wecare-on").style.display = "none";
                 document.getElementById("wecare-on-virtual").style.display = "none";
                 document.getElementById("wecare-off").style.display = "block";
             }
         }
-
-    </script>  -->
+    </script>
       
       <!-- do ogs only at certain times 
       <script>
