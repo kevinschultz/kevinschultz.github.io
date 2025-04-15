@@ -249,6 +249,38 @@
         }
     </script>
       
+      <!-- SFS Time Check Function -->
+<script>
+    function checkSFSTime() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        
+        // Convert current time to minutes for easier comparison
+        var currentTimeInMinutes = hours * 60 + minutes;
+        
+        // Define the time window: 4:25 PM to 5:30 PM (in minutes: 16h25m = 985 to 17h30m = 1050)
+        var startWindow = 16 * 60 + 20; // 4:25 PM
+        var endWindow = 17 * 60 + 30;   // 5:30 PM
+        
+        // Check if current time is in the window
+        if (currentTimeInMinutes >= startWindow && currentTimeInMinutes <= endWindow) {
+            // Show the modal
+            var sfsModal = new bootstrap.Modal(document.getElementById('sfsTimeModal'));
+            sfsModal.show();
+        }
+    }
+    
+    // Add event listener to SFS button
+    document.addEventListener('DOMContentLoaded', function() {
+        var sfsButton = document.querySelector('a[href="#sfs"]');
+        if (sfsButton) {
+            sfsButton.addEventListener('click', function(event) {
+                checkSFSTime();
+            });
+        }
+    });
+    </script>
       <!-- do ogs only at certain times 
       <script>
         function checkAppointmentTime2() {
@@ -270,5 +302,22 @@
         </script> --> 
         
 
+        <!-- SFS Hours Modal -->
+        <div class="modal fade" id="sfsTimeModal" tabindex="-1" aria-labelledby="sfsTimeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="sfsTimeModalLabel">SFS Hours Notice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                Boston campus walk-in hours are 8:30 AM to 4:30 PM. General inquiries are serviced at the front desk from 4:30- 5:00. To proceed with check-in, please tap Continue.
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+                </div>
+            </div>
+            </div>
+        </div>
     </body>
 </html>
