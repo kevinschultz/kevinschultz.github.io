@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NU ID Lookup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .input-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .help-text {
+            font-size: 14px;
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .api-config {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.show {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .results-header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .results-count {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 0 1px #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .id-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .input-card, .results-section {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .table-container {
+                box-shadow: none;
+                border: 1px solid #e0e0e0;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NU ID Lookup</h1>
+            <p>Enter one or more 9-digit NU IDs to retrieve information</p>
+        </div>
+
+        <div class="input-card">
+            <div class="input-group">
+                <label for="ids">NU IDs (9 digits each)</label>
+                <div class="input-container">
+                    <textarea id="ids" placeholder="000123456&#10;000789012&#10;000345678" rows="5"></textarea>
+                    <div class="help-text">Enter each ID on a new line (e.g., 000123456). Leading zeros are preserved.</div>
+                </div>
+            </div>
+
+            <div class="api-config">
+                <label for="apiUrl">API Endpoint</label>
+                <input type="text" id="apiUrl" placeholder="https://api.example.com/lookup" value="">
+                <div class="help-text">Configure the API endpoint for ID lookups</div>
+            </div>
+
+            <button class="btn" onclick="lookupIds()">
+                <span class="loading">⟳</span>
+                <span class="btn-text">Look Up IDs</span>
+            </button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="results-header">
+                <h2>Results</h2>
+                <div class="results-count" id="resultsCount">0 records</div>
+            </div>
+
+            <div class="table-container">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>NU ID</th>
+                            <th>Intended Visa Type</th>
+                            <th>IV Type Value</th>
+                            <th>IV Type Kafka Value</th>
+                            <th>Top Decision</th>
+                            <th>Top Decision Code</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Column mapping from API response to display names
+        const columnMapping = {
+            'Person NUID': 'NU ID',
+            'Application Intended Visa Type': 'Intended Visa Type',
+            'Lookup Prompt Export Value': 'IV Type Value',
+            'Lookup Prompt Export Value 5': 'IV Type Kafka Value',
+            'Decision by Rank Name': 'Top Decision',
+            'Decision by Rank Code': 'Top Decision Code'
+        };
+
+        function validateIds(idString) {
+            const ids = idString.split('\n')
+                .map(id => id.trim())
+                .filter(id => id.length > 0);
+            
+            const validIds = [];
+            const errors = [];
+
+            for (const id of ids) {
+                // Check if it's exactly 9 digits (including leading zeros)
+                if (!/^\d{9}$/.test(id)) {
+                    errors.push(`Invalid ID: ${id} (must be exactly 9 digits)`);
+                } else {
+                    validIds.push(id);
+                }
+            }
+
+            return { validIds, errors };
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function hideError() {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.classList.remove('show');
+        }
+
+        function setLoading(loading) {
+            const btn = document.querySelector('.btn');
+            const loadingEl = document.querySelector('.loading');
+            const btnText = document.querySelector('.btn-text');
+            
+            btn.disabled = loading;
+            loadingEl.classList.toggle('show', loading);
+            btnText.textContent = loading ? 'Looking up...' : 'Look Up IDs';
+        }
+
+        function displayResults(data) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsBody = document.getElementById('resultsBody');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            // Clear previous results
+            resultsBody.innerHTML = '';
+            
+            // Update count
+            resultsCount.textContent = `${data.length} record${data.length !== 1 ? 's' : ''}`;
+            
+            // Add rows
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // Create cells in the desired order
+                const cellOrder = [
+                    'Person NUID',
+                    'Application Intended Visa Type',
+                    'Lookup Prompt Export Value',
+                    'Lookup Prompt Export Value 5',
+                    'Decision by Rank Name',
+                    'Decision by Rank Code'
+                ];
+                
+                cellOrder.forEach(originalField => {
+                    const td = document.createElement('td');
+                    const value = row[originalField] || '';
+                    
+                    // Special formatting for NU ID
+                    if (originalField === 'Person NUID') {
+                        td.className = 'id-cell';
+                    }
+                    
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                
+                resultsBody.appendChild(tr);
+            });
+            
+            // Show results section
+            resultsSection.classList.add('show');
+        }
+
+        async function lookupIds() {
+            const idsInput = document.getElementById('ids').value;
+            const apiUrl = document.getElementById('apiUrl').value;
+            
+            // Validate inputs
+            if (!idsInput.trim()) {
+                showError('Please enter at least one NU ID.');
+                return;
+            }
+            
+            if (!apiUrl.trim()) {
+                showError('Please enter the API endpoint URL.');
+                return;
+            }
+            
+            // Validate ID format
+            const { validIds, errors } = validateIds(idsInput);
+            
+            if (errors.length > 0) {
+                showError(errors.join(', '));
+                return;
+            }
+            
+            if (validIds.length === 0) {
+                showError('No valid IDs found.');
+                return;
+            }
+            
+            hideError();
+            setLoading(true);
+            
+            try {
+                // Prepare request body (adjust this based on your API requirements)
+                const requestBody = {
+                    ids: validIds
+                };
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Ensure data is an array
+                if (!Array.isArray(data)) {
+                    throw new Error('API response is not an array of records');
+                }
+                
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Lookup error:', error);
+                showError(`Error: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Allow Enter key to submit (Ctrl+Enter for new line in textarea)
+        document.getElementById('ids').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.ctrlKey && !event.shiftKey) {
+                event.preventDefault();
+                lookupIds();
+            }
+        });
+
+        // Demo data functionality (for testing without a real API)
+        function loadDemoData() {
+            const demoData = [
+                {
+                    'Person NUID': '000123456',
+                    'Application Intended Visa Type': 'H-1B',
+                    'Lookup Prompt Export Value': 'Specialty Occupation',
+                    'Lookup Prompt Export Value 5': 'H1B_SPEC_OCC',
+                    'Decision by Rank Name': 'Approved',
+                    'Decision by Rank Code': 'APR'
+                },
+                {
+                    'Person NUID': '000789012',
+                    'Application Intended Visa Type': 'F-1',
+                    'Lookup Prompt Export Value': 'Student',
+                    'Lookup Prompt Export Value 5': 'F1_STUDENT',
+                    'Decision by Rank Name': 'Pending',
+                    'Decision by Rank Code': 'PND'
+                }
+            ];
+            
+            displayResults(demoData);
+        }
+
+        // Uncomment the line below to load demo data on page load
+        loadDemoData();
+    </script>
+</body>
+</html>
