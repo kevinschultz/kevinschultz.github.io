@@ -184,69 +184,45 @@
     </script>
     <!-- do WeWork checkin only during certain times -->
     <script>
-        function checkAppointmentTime() {
-            var now = new Date();
-            var dayOfWeek = now.getDay();
-            var hour = now.getHours();
-            var minutes = now.getMinutes();
-    
-            var isVisible = false;
-            var elementToShow = "wecare-on";
-    
-            switch (dayOfWeek) {
-                case 1: // Monday
-                    if (hour === 9 && minutes >= 30 || hour === 10 || hour === 11 && minutes < 30) {
-                        isVisible = true;
-                    }
-                    break;
-                case 2: // Tuesday
-                    if (hour === 12 || hour === 13) {
-                        isVisible = true;
-                    } else if (hour === 14 && minutes < 2){
-                        isVisible = true;
-                    }
-                    break;
-                case 3: // Wednesday
-                    if (hour === 10 || hour === 11) {
-                        isVisible = true;
-                        elementToShow = "wecare-on-virtual";
-                        document.getElementById("wecare-on").style.display = "none";
-                    } else if (hour === 13 || hour === 14 && minutes <= 30) {
-                        isVisible = true;
-                    }
-                    break;
-                case 4: // Thursday
-                    if (hour === 13 || hour === 14) {
-                        isVisible = true;
-                        elementToShow = "wecare-on-virtual";
-                        document.getElementById("wecare-on").style.display = "none";
-                    } else if (hour === 15 || hour === 16 && minutes <= 30) {
-                        isVisible = true;
-                    }
-                    break;
-                case 5: // Friday
-                    if (hour === 11 || hour === 12 && minutes <= 30) {
-                        isVisible = true;
-                    } else if (hour === 13 || hour === 14) {
-                        isVisible = true;
-                        elementToShow = "wecare-on-virtual";
-                        document.getElementById("wecare-on").style.display = "none";
-                    }
-                    break;
-                default:
-                    isVisible = false;
-                    break;
+    function checkAppointmentTime() {
+    var now = new Date();
+    var dayOfWeek = now.getDay();
+    var hour = now.getHours();
+    var minutes = now.getMinutes();
+
+    var isVisible = false;
+    var elementToShow = "wecare-on";
+
+    switch (dayOfWeek) {
+        case 2: // Tuesday: 10-11:30am
+            if (hour === 10 || (hour === 11 && minutes <= 30)) {
+                isVisible = true;
             }
-    
-            if (isVisible) {
-                document.getElementById(elementToShow).style.display = "block";
-                document.getElementById("wecare-off").style.display = "none";
-            } else {
-                document.getElementById("wecare-on").style.display = "none";
-                document.getElementById("wecare-on-virtual").style.display = "none";
-                document.getElementById("wecare-off").style.display = "block";
+            break;
+        case 3: // Wednesday: 2-3:30pm
+            if (hour === 14 || (hour === 15 && minutes <= 30)) {
+                isVisible = true;
             }
-        }
+            break;
+        case 4: // Thursday: 10-11:30am AND 2-3:30pm
+            if (hour === 10 || (hour === 11 && minutes <= 30) || hour === 14 || (hour === 15 && minutes <= 30)) {
+                isVisible = true;
+            }
+            break;
+        default:
+            isVisible = false;
+            break;
+    }
+
+    if (isVisible) {
+        document.getElementById(elementToShow).style.display = "block";
+        document.getElementById("wecare-off").style.display = "none";
+    } else {
+        document.getElementById("wecare-on").style.display = "none";
+        document.getElementById("wecare-on-virtual").style.display = "none";
+        document.getElementById("wecare-off").style.display = "block";
+    }
+}
     </script>
       
       <!-- SFS Time Check Function -->
