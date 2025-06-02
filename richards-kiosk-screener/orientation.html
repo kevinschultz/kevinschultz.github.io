@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>354 Richards Orientation Referral</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <!-- Page Content-->
+        <br/><br /><br />
+        <div align="center">
+            <a href="fully://launcher"><img src="https://kevinschultz.github.io/richards-kiosk-screener/assets/ac-grid-6-black.svg" height="50%" width="50%"></a>
+        </div>
+        <br/><br /><br />
+        
+        <p align="center" style="padding-left: 50px; padding-right: 50px">
+            Use this form to refer a student to 354 Richards. Please enter the student's 9-digit NU ID number. A Teams message will be sent to the 354 Richards UDAY FA and CX Support Channel.
+            <br /><br />
+        </p>
+        
+        <!-- Initial Refer Student Button -->
+        <div id="initial-button" align="center">
+            <table align="center">
+                <tr>
+                    <td><button class="btn btn-primary btn-xlg" onclick="showReferralForm()">Refer Student</button></td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Student ID Input Form (initially hidden) -->
+        <div id="referral-form" style="display: none;">
+            <div class="container px-lg-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4"><i class="bi bi-person-plus"></i></div>
+                                <h2 class="fs-4 fw-bold">Student Referral</h2>
+                                <p class="mb-3">Enter the student's 9-digit ID number:</p>
+                                
+                                <div class="mb-3">
+                                    <input type="text" 
+                                           id="student-id" 
+                                           class="form-control form-control-lg text-center" 
+                                           placeholder="000000000" 
+                                           maxlength="9"
+                                           pattern="[0-9]{9}"
+                                           autocomplete="off">
+                                    <div id="error-message" class="text-danger mt-2" style="display: none;"></div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button id="submit-btn" class="btn btn-primary btn-lg" onclick="submitReferral()">
+                                        <span id="submit-text">Submit Referral</span>
+                                        <span id="loading-spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success Message (initially hidden) -->
+        <div id="success-message" style="display: none;">
+            <div class="container px-lg-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card bg-success border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5">
+                                <div class="feature bg-white text-success rounded-3 mb-4"><i class="bi bi-check-circle"></i></div>
+                                <h2 class="fs-4 fw-bold text-white">Referral Submitted</h2>
+                                <p class="mb-3 text-white">Student has been successfully referred for orientation services.</p>
+                                <button class="btn btn-light btn-lg" onclick="resetForm()">Refer Another Student</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <br />
+        <br />
+        <table align="center">
+            <tr>
+                <td>
+                    <p><a class="btn btn-danger btn-sm" href="orientation-referral.html">Restart</a></p>
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        
+        <!-- Custom JavaScript for Orientation Referral -->
+        <script>
+            // Replace this with your actual endpoint URL
+            const REFERRAL_ENDPOINT = 'https://eokrjt7u2oel17h.m.pipedream.net';
+            
+            function showReferralForm() {
+                document.getElementById('initial-button').style.display = 'none';
+                document.getElementById('referral-form').style.display = 'block';
+                document.getElementById('student-id').focus();
+            }
+            
+            function resetForm() {
+                document.getElementById('initial-button').style.display = 'block';
+                document.getElementById('referral-form').style.display = 'none';
+                document.getElementById('success-message').style.display = 'none';
+                document.getElementById('student-id').value = '';
+                document.getElementById('error-message').style.display = 'none';
+                document.getElementById('submit-btn').disabled = false;
+                document.getElementById('submit-text').style.display = 'inline';
+                document.getElementById('loading-spinner').style.display = 'none';
+            }
+            
+            function validateStudentId(id) {
+                // Remove any non-digit characters
+                const cleanId = id.replace(/\D/g, '');
+                
+                // Check if it's exactly 9 digits
+                if (cleanId.length !== 9) {
+                    return { valid: false, message: 'Student ID must be exactly 9 digits.' };
+                }
+                
+                return { valid: true, cleanId: cleanId };
+            }
+            
+            function showError(message) {
+                const errorDiv = document.getElementById('error-message');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+            
+            function hideError() {
+                document.getElementById('error-message').style.display = 'none';
+            }
+            
+            async function submitReferral() {
+                const studentIdInput = document.getElementById('student-id');
+                const studentId = studentIdInput.value.trim();
+                
+                hideError();
+                
+                // Validate the student ID
+                const validation = validateStudentId(studentId);
+                if (!validation.valid) {
+                    showError(validation.message);
+                    studentIdInput.focus();
+                    return;
+                }
+                
+                // Show loading state
+                document.getElementById('submit-btn').disabled = true;
+                document.getElementById('submit-text').style.display = 'none';
+                document.getElementById('loading-spinner').style.display = 'inline-block';
+                
+                try {
+                    // Send POST request with the student ID as an array
+                    const response = await fetch(REFERRAL_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify([validation.cleanId])
+                    });
+                    
+                    if (response.ok) {
+                        // Show success message
+                        document.getElementById('referral-form').style.display = 'none';
+                        document.getElementById('success-message').style.display = 'block';
+                    } else {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Error submitting referral:', error);
+                    showError('Failed to submit referral. Please try again.');
+                    
+                    // Reset loading state
+                    document.getElementById('submit-btn').disabled = false;
+                    document.getElementById('submit-text').style.display = 'inline';
+                    document.getElementById('loading-spinner').style.display = 'none';
+                }
+            }
+            
+            // Allow form submission with Enter key
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('student-id').addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        submitReferral();
+                    }
+                });
+                
+                // Only allow digits in the input field
+                document.getElementById('student-id').addEventListener('input', function(event) {
+                    const value = event.target.value;
+                    const digitsOnly = value.replace(/\D/g, '');
+                    if (value !== digitsOnly) {
+                        event.target.value = digitsOnly;
+                    }
+                    hideError(); // Hide error when user starts typing
+                });
+            });
+        </script>
+    </body>
+</html>
