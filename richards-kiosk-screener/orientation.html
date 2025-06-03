@@ -87,6 +87,24 @@
             </div>
         </div>
         
+        <!-- Error Message (initially hidden) -->
+        <div id="error-response-message" style="display: none;">
+            <div class="container px-lg-5">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-xl-4">
+                        <div class="card bg-danger border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5">
+                                <div class="feature bg-white text-danger rounded-3 mb-4"><i class="bi bi-x-circle"></i></div>
+                                <h2 class="fs-4 fw-bold text-white">Student Not Found</h2>
+                                <p class="mb-3 text-white">The NU ID was not found. Please verify the NU ID and try again.</p>
+                                <button class="btn btn-light btn-lg" onclick="resetForm()">Try Again</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Success Message (initially hidden) -->
         <div id="success-message" style="display: none;">
             <div class="container px-lg-5">
@@ -96,7 +114,7 @@
                             <div class="card-body text-center p-4 p-lg-5">
                                 <div class="feature bg-white text-success rounded-3 mb-4"><i class="bi bi-check-circle"></i></div>
                                 <h2 class="fs-4 fw-bold text-white">Referral Submitted</h2>
-                                <p class="mb-3 text-white">Student has been successfully referred for orientation services.</p>
+                                <p class="mb-3 text-white">Request has been successfully sent to Teams.</p>
                                 <button class="btn btn-light btn-lg" onclick="resetForm()">Refer Another Student</button>
                             </div>
                         </div>
@@ -151,6 +169,7 @@
                 document.getElementById('initial-button').style.display = 'block';
                 document.getElementById('referral-form').style.display = 'none';
                 document.getElementById('success-message').style.display = 'none';
+                document.getElementById('error-response-message').style.display = 'none';
                 document.getElementById('student-id').value = '';
                 document.getElementById('error-message').style.display = 'none';
                 document.getElementById('submit-btn').disabled = false;
@@ -219,15 +238,49 @@
                     });
                     
                     if (response.ok) {
-                        // Show success message
-                        document.getElementById('referral-form').style.display = 'none';
-                        document.getElementById('success-message').style.display = 'block';
+                        // Get the response text to check the result
+                        const responseText = await response.text();
+                        
+                        // Check for success or error messages from the API
+                        if (responseText.includes('NUID found. Response OK.')) {
+                            // Show success message
+                            document.getElementById('referral-form').style.display = 'none';
+                            document.getElementById('success-message').style.display = 'block';
+                            
+                            // Auto-scroll to success message
+                            setTimeout(() => {
+                                document.getElementById('success-message').scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'center',
+                                    inline: 'nearest'
+                                });
+                            }, 100);
+                            
+                        } else if (responseText.includes('NUID Not Found. Ending.')) {
+                            // Show NUID not found error
+                            document.getElementById('referral-form').style.display = 'none';
+                            document.getElementById('error-response-message').style.display = 'block';
+                            
+                            // Auto-scroll to error message
+                            setTimeout(() => {
+                                document.getElementById('error-response-message').scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'center',
+                                    inline: 'nearest'
+                                });
+                            }, 100);
+                            
+                        } else {
+                            // Unexpected response format
+                            throw new Error(`Unexpected response: ${responseText}`);
+                        }
+                        
                     } else {
                         throw new Error(`Server responded with status: ${response.status}`);
                     }
                 } catch (error) {
                     console.error('Error submitting referral:', error);
-                    showError('Failed to submit referral. Please try again.');
+                    showError('Failed to submit referral. Please check your connection and try again.');
                     
                     // Reset loading state
                     document.getElementById('submit-btn').disabled = false;
