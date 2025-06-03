@@ -73,12 +73,26 @@
                                     <div id="error-message" class="text-danger mt-2" style="display: none;"></div>
                                 </div>
                                 
+                                <!-- Progress bar (initially hidden) -->
+                                <div id="progress-container" class="mb-3" style="display: none;">
+                                    <div class="progress" style="height: 25px;">
+                                        <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                                             role="progressbar" 
+                                             style="width: 0%;" 
+                                             aria-valuenow="0" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            <span id="progress-text">Processing...</span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted mt-1 d-block">Verifying student information...</small>
+                                </div>
+                                
                                 <div class="d-grid gap-2">
                                     <button id="submit-btn" class="btn btn-primary btn-lg" onclick="submitReferral()">
                                         <span id="submit-text">Submit Referral</span>
-                                        <span id="loading-spinner" class="spinner-border spinner-border-sm ms-2" style="display: none;"></span>
                                     </button>
-                                    <button class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+                                    <button id="cancel-btn" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -172,9 +186,16 @@
                 document.getElementById('error-response-message').style.display = 'none';
                 document.getElementById('student-id').value = '';
                 document.getElementById('error-message').style.display = 'none';
+                document.getElementById('progress-container').style.display = 'none';
                 document.getElementById('submit-btn').disabled = false;
-                document.getElementById('submit-text').style.display = 'inline';
-                document.getElementById('loading-spinner').style.display = 'none';
+                document.getElementById('cancel-btn').disabled = false;
+                document.getElementById('submit-text').textContent = 'Submit Referral';
+                
+                // Reset progress bar
+                const progressBar = document.getElementById('progress-bar');
+                progressBar.style.width = '0%';
+                progressBar.setAttribute('aria-valuenow', '0');
+                document.getElementById('progress-text').textContent = 'Processing...';
             }
             
             function validateStudentId(id) {
@@ -208,6 +229,67 @@
                 document.getElementById('error-message').style.display = 'none';
             }
             
+            function startProgressBar() {
+                document.getElementById('progress-container').style.display = 'block';
+                const progressBar = document.getElementById('progress-bar');
+                const progressText = document.getElementById('progress-text');
+                
+                let progress = 0;
+                const duration = 6000; // 6 seconds
+                const interval = 50; // Update every 50ms
+                const increment = (100 / duration) * interval;
+                
+                const progressInterval = setInterval(() => {
+                    progress += increment;
+                    
+                    if (progress <= 100) {
+                        progressBar.style.width = progress + '%';
+                        progressBar.setAttribute('aria-valuenow', Math.round(progress));
+                        
+                        // Update progress text based on progress
+                        if (progress < 30) {
+                            progressText.textContent = 'Processing...';
+                        } else if (progress < 60) {
+                            progressText.textContent = 'Verifying...';
+                        } else if (progress < 90) {
+                            progressText.textContent = 'Almost done...';
+                        } else {
+                            progressText.textContent = 'Completing...';
+                        }
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                    }
+                }, interval);
+                
+                return progressInterval;
+            }
+            
+            function completeProgress(callback) {
+                const progressBar = document.getElementById('progress-bar');
+                const currentProgress = parseInt(progressBar.getAttribute('aria-valuenow'));
+                
+                if (currentProgress < 100) {
+                    // Speed up to completion
+                    let progress = currentProgress;
+                    const completeInterval = setInterval(() => {
+                        progress += 5;
+                        progressBar.style.width = progress + '%';
+                        progressBar.setAttribute('aria-valuenow', progress);
+                        
+                        if (progress >= 100) {
+                            clearInterval(completeInterval);
+                            document.getElementById('progress-text').textContent = 'Complete!';
+                            setTimeout(callback, 500); // Small delay before showing result
+                        }
+                    }, 25);
+                } else {
+                    document.getElementById('progress-text').textContent = 'Complete!';
+                    setTimeout(callback, 500);
+                }
+            }
+            
             async function submitReferral() {
                 const studentIdInput = document.getElementById('student-id');
                 const studentId = studentIdInput.value.trim();
@@ -224,8 +306,11 @@
                 
                 // Show loading state
                 document.getElementById('submit-btn').disabled = true;
-                document.getElementById('submit-text').style.display = 'none';
-                document.getElementById('loading-spinner').style.display = 'inline-block';
+                document.getElementById('cancel-btn').disabled = true;
+                document.getElementById('submit-text').textContent = 'Processing...';
+                
+                // Start the progress bar
+                const progressInterval = startProgressBar();
                 
                 try {
                     // Send POST request with the student ID as an array
@@ -241,34 +326,41 @@
                         // Get the response text to check the result
                         const responseText = await response.text();
                         
+                        // Clear the progress interval since we have a response
+                        clearInterval(progressInterval);
+                        
                         // Check for success or error messages from the API
                         if (responseText.includes('NUID found. Response OK.')) {
-                            // Show success message
-                            document.getElementById('referral-form').style.display = 'none';
-                            document.getElementById('success-message').style.display = 'block';
-                            
-                            // Auto-scroll to success message
-                            setTimeout(() => {
-                                document.getElementById('success-message').scrollIntoView({ 
-                                    behavior: 'smooth', 
-                                    block: 'center',
-                                    inline: 'nearest'
-                                });
-                            }, 100);
+                            // Complete progress bar then show success
+                            completeProgress(() => {
+                                document.getElementById('referral-form').style.display = 'none';
+                                document.getElementById('success-message').style.display = 'block';
+                                
+                                // Auto-scroll to success message
+                                setTimeout(() => {
+                                    document.getElementById('success-message').scrollIntoView({ 
+                                        behavior: 'smooth', 
+                                        block: 'center',
+                                        inline: 'nearest'
+                                    });
+                                }, 100);
+                            });
                             
                         } else if (responseText.includes('NUID Not Found. Ending.')) {
-                            // Show NUID not found error
-                            document.getElementById('referral-form').style.display = 'none';
-                            document.getElementById('error-response-message').style.display = 'block';
-                            
-                            // Auto-scroll to error message
-                            setTimeout(() => {
-                                document.getElementById('error-response-message').scrollIntoView({ 
-                                    behavior: 'smooth', 
-                                    block: 'center',
-                                    inline: 'nearest'
-                                });
-                            }, 100);
+                            // Complete progress bar then show error
+                            completeProgress(() => {
+                                document.getElementById('referral-form').style.display = 'none';
+                                document.getElementById('error-response-message').style.display = 'block';
+                                
+                                // Auto-scroll to error message
+                                setTimeout(() => {
+                                    document.getElementById('error-response-message').scrollIntoView({ 
+                                        behavior: 'smooth', 
+                                        block: 'center',
+                                        inline: 'nearest'
+                                    });
+                                }, 100);
+                            });
                             
                         } else {
                             // Unexpected response format
@@ -280,12 +372,16 @@
                     }
                 } catch (error) {
                     console.error('Error submitting referral:', error);
+                    
+                    // Clear progress and show error
+                    clearInterval(progressInterval);
+                    document.getElementById('progress-container').style.display = 'none';
                     showError('Failed to submit referral. Please check your connection and try again.');
                     
                     // Reset loading state
                     document.getElementById('submit-btn').disabled = false;
-                    document.getElementById('submit-text').style.display = 'inline';
-                    document.getElementById('loading-spinner').style.display = 'none';
+                    document.getElementById('cancel-btn').disabled = false;
+                    document.getElementById('submit-text').textContent = 'Submit Referral';
                 }
             }
             
