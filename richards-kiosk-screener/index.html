@@ -182,7 +182,7 @@
             });
         });
     </script>
-    <!-- do WeWork checkin only during certain times -->
+    <!-- do WeCare checkin only during certain times -->
     <script>
     function checkAppointmentTime() {
     var now = new Date();
@@ -194,18 +194,13 @@
     var elementToShow = "wecare-on";
 
     switch (dayOfWeek) {
-        case 2: // Tuesday: 10-11:30am
-            if (hour === 10 || (hour === 11 && minutes <= 30)) {
+        case 1: // Monday: 1:30am to 1:45am
+            if (hour === 1 && minutes >= 30 && minutes <= 45) {
                 isVisible = true;
             }
             break;
-        case 3: // Wednesday: 2-3:30pm
-            if (hour === 14 || (hour === 15 && minutes <= 30)) {
-                isVisible = true;
-            }
-            break;
-        case 4: // Thursday: 10-11:30am AND 2-3:30pm
-            if (hour === 10 || (hour === 11 && minutes <= 30) || hour === 14 || (hour === 15 && minutes <= 30)) {
+        case 3: // Wednesday: 1:30am to 1:45am
+            if (hour === 1 && minutes >= 30 && minutes <= 45) {
                 isVisible = true;
             }
             break;
