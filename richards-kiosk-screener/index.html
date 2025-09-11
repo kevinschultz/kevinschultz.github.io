@@ -194,13 +194,14 @@
     var elementToShow = "wecare-on";
 
     switch (dayOfWeek) {
-        case 1: // Monday: 1:30am to 1:45am
-            if (hour === 1 && minutes >= 30 && minutes <= 45) {
+        case 2: // Tuesday 10:00 AM - 11:30 AM
+            if (hour === 10 || (hour === 11 && minutes <= 30)) {
                 isVisible = true;
             }
             break;
-        case 3: // Wednesday: 1:30am to 1:45am
-            if (hour === 1 && minutes >= 30 && minutes <= 45) {
+        case 3: // Wednesday 2:00 PM - 3:30 PM
+        case 4: // Thursday 2:00 PM - 3:30 PM
+            if (hour === 14 || (hour === 15 && minutes <= 30)) {
                 isVisible = true;
             }
             break;
